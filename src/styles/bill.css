@@ -1,0 +1,456 @@
+/* ===== GOOGLE FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ===== ROOT VARIABLES - CHERRY BLOSSOM & OCEAN ===== */
+:root {
+  --bg-primary: #f8f3f9;
+  --bg-secondary: #ffffff;
+  --card-bg: #ffffff;
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  
+  /* Cherry Blossom Colors */
+  --cherry-light: #ffd6e8;
+  --cherry-main: #ffb3d9;
+  --cherry-dark: #ff8ac4;
+  
+  /* Ocean Colors */
+  --ocean-light: #a8dadc;
+  --ocean-main: #5ec4d4;
+  --ocean-dark: #457b9d;
+  
+  /* Mint & Soft Colors */
+  --mint: #b8e6d5;
+  --lavender: #e8d5f2;
+  --peach: #ffd4b8;
+  
+  /* UI Colors */
+  --success: #68d391;
+  --error: #fc8181;
+  --border: #e2e8f0;
+  --shadow: rgba(0, 0, 0, 0.08);
+  --hover-shadow: rgba(0, 0, 0, 0.15);
+  
+  --border-radius: 10px;
+  --transition: all 0.3s ease;
+  --font: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* Sidebar Widths */
+  --sidebar-width: 280px;
+  --sidebar-collapsed: 70px;
+}
+
+/* ===== GLOBAL RESET ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: linear-gradient(135deg, #ffd6e8 0%, #a8dadc 50%, #b8e6d5 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--text-primary);
+  line-height: 1.4;
+  position: relative;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(255, 182, 217, 0.3) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(168, 218, 220, 0.3) 0%, transparent 40%);
+  pointer-events: none;
+  animation: gentleFloat 15s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* ===== Main Content Layout ===== */
+.main-content {
+  margin-left: var(--sidebar-width);
+  height: 100vh;
+  transition: margin-left 0.3s ease;
+  position: relative;
+  z-index: 1;
+  width: calc(100% - var(--sidebar-width));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* ===== Container ===== */
+.stock-container {
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ===== Title ===== */
+.stock-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  background: linear-gradient(90deg, var(--cherry-dark), var(--ocean-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+
+/* ===== Message (Success/Error) ===== */
+.message {
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  animation: slideDown 0.4s ease;
+  backdrop-filter: blur(10px);
+  font-size: 0.85rem;
+  background: linear-gradient(135deg, rgba(104, 211, 145, 0.2), rgba(184, 230, 213, 0.2));
+  color: #2f855a;
+  border: 2px solid var(--success);
+}
+
+/* ===== Bill Form ===== */
+.bill-form {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--border-radius);
+  padding: 16px 20px;
+  box-shadow: 0 8px 32px var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: var(--transition);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 12px;
+  align-items: start;
+}
+
+.bill-form:hover {
+  box-shadow: 0 12px 48px var(--hover-shadow);
+}
+
+/* ===== Input Fields ===== */
+.bill-form input,
+.bill-form select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: rgba(168, 218, 220, 0.05);
+  color: var(--text-primary);
+  transition: var(--transition);
+  font-family: var(--font);
+  height: 38px;
+}
+
+.bill-form input::placeholder,
+.bill-form select option:first-child {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.bill-form input:focus,
+.bill-form select:focus {
+  border-color: var(--ocean-main);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(168, 218, 220, 0.2);
+  background: white;
+}
+
+/* ===== Grid Layout ===== */
+/* Row 1: Client Name (full), Email (2 cols) */
+.bill-form input[name="client_name"] {
+  grid-column: 1 / 2;
+}
+
+.bill-form input[name="client_email"] {
+  grid-column: 2 / 4;
+}
+
+/* Row 2: Phone, Product Select (2 cols) */
+.bill-form input[name="client_phone"] {
+  grid-column: 1 / 2;
+}
+
+.bill-form select[name="item_id"] {
+  grid-column: 2 / 4;
+}
+
+/* Row 3: Rate, Quantity, CGST */
+.bill-form input[name="item_rate"] {
+  grid-column: 1 / 2;
+}
+
+.bill-form input[name="quantity"] {
+  grid-column: 2 / 3;
+}
+
+.bill-form input[name="cgst"] {
+  grid-column: 3 / 4;
+}
+
+/* Row 4: SGST, Total (2 cols) */
+.bill-form input[name="sgst"] {
+  grid-column: 1 / 2;
+}
+
+.bill-form input[name="total_amount"] {
+  grid-column: 2 / 4;
+}
+
+/* Row 5: Payment Method (full), Button (full) */
+.bill-form select[name="payment_method"] {
+  grid-column: 1 / 4;
+}
+
+.bill-form .save-btn {
+  grid-column: 1 / 4;
+}
+
+/* ===== Select Dropdown Styling ===== */
+.bill-form select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235ec4d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 35px;
+}
+
+.bill-form select:hover {
+  border-color: var(--cherry-main);
+}
+
+/* ===== Read-Only Fields (Rate & Total) ===== */
+.bill-form input[readonly] {
+  background: linear-gradient(135deg, rgba(255, 214, 232, 0.15), rgba(168, 218, 220, 0.15));
+  cursor: not-allowed;
+  font-weight: 600;
+  color: var(--ocean-dark);
+  border-color: var(--cherry-light);
+}
+
+/* ===== Submit Button ===== */
+.save-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+  border: none;
+  font-family: var(--font);
+  background: linear-gradient(135deg, var(--cherry-main), var(--ocean-main));
+  color: white;
+  box-shadow: 0 4px 12px rgba(94, 196, 212, 0.3);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  height: 40px;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(94, 196, 212, 0.5);
+  background: linear-gradient(135deg, var(--cherry-dark), var(--ocean-dark));
+}
+
+.save-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(94, 196, 212, 0.3);
+}
+
+/* ===== Animations ===== */
+@keyframes gentleFloat {
+  0%, 100% { 
+    transform: translateY(0) scale(1); 
+    opacity: 0.3;
+  }
+  50% { 
+    transform: translateY(-20px) scale(1.1); 
+    opacity: 0.5;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Responsive Design ===== */
+
+/* Large Desktop - 1440px+ */
+@media (min-width: 1440px) {
+  .stock-container {
+    max-width: 1000px;
+  }
+}
+
+/* Tablet - 1024px */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+  
+  .main-content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+  }
+  
+  .stock-container { 
+    max-width: 800px;
+  }
+  
+  .stock-title { 
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .bill-form {
+    padding: 14px 18px;
+    gap: 8px 10px;
+  }
+}
+
+/* Tablet/Mobile - 768px */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 70px;
+  }
+  
+  .main-content {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+  }
+  
+  .stock-container { 
+    max-width: 100%;
+    padding: 0 14px;
+  }
+  
+  .stock-title { 
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+  
+  .bill-form {
+    padding: 14px 16px;
+    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  /* Mobile 2-column layout */
+  .bill-form input[name="client_name"],
+  .bill-form input[name="client_email"],
+  .bill-form select[name="item_id"],
+  .bill-form input[name="total_amount"],
+  .bill-form select[name="payment_method"],
+  .bill-form .save-btn {
+    grid-column: 1 / 3;
+  }
+  
+  .bill-form input[name="client_phone"],
+  .bill-form input[name="item_rate"],
+  .bill-form input[name="quantity"],
+  .bill-form input[name="cgst"],
+  .bill-form input[name="sgst"] {
+    grid-column: auto;
+  }
+}
+
+/* Mobile - 480px */
+@media (max-width: 480px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .stock-container { 
+    padding: 0 10px;
+  }
+  
+  .stock-title { 
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+  }
+  
+  .bill-form {
+    padding: 12px 14px;
+    gap: 7px;
+    grid-template-columns: 1fr;
+  }
+  
+  .bill-form input,
+  .bill-form select {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    height: 36px;
+    grid-column: 1;
+  }
+  
+  .save-btn {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    height: 38px;
+  }
+  
+  .message {
+    padding: 7px 12px;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+}
+
+/* Extra Small Mobile - 360px */
+@media (max-width: 360px) {
+  .stock-title { 
+    font-size: 1.2rem;
+  }
+  
+  .bill-form {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+  
+  .bill-form input,
+  .bill-form select {
+    padding: 7px 9px;
+    font-size: 0.75rem;
+    height: 34px;
+  }
+  
+  .save-btn {
+    padding: 9px 16px;
+    font-size: 0.8rem;
+    height: 36px;
+  }
+}
