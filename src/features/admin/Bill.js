@@ -7,9 +7,9 @@ const Bill = () => {
   const { token } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [clientSuggestions, setClientSuggestions] = useState([]);
-  const [selectedClient, setSelectedClient] = useState(null);
   const [loadingClients, setLoadingClients] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [message, setMessage] = useState("");
 
   const [billData, setBillData] = useState({
     client_name: "",
@@ -25,9 +25,7 @@ const Bill = () => {
     payment_method: "",
   });
 
-  const [message, setMessage] = useState("");
-
-  // ✅ Fetch all products
+  // ✅ Fetch all products once
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -42,15 +40,14 @@ const Bill = () => {
     fetchProducts();
   }, [token]);
 
-  // ✅ Handle Input Changes
+  // ✅ Handle input changes (and trigger client search)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBillData((prev) => ({ ...prev, [name]: value }));
 
-    // 🔍 Trigger search for client name typing
     if (name === "client_name") {
       setShowSuggestions(true);
-      if (value.trim().length >= 1) {
+      if (value.trim().length > 0) {
         fetchClientSuggestions(value);
       } else {
         setClientSuggestions([]);
@@ -58,14 +55,16 @@ const Bill = () => {
     }
   };
 
-  // ✅ Fetch client suggestions from backend
+  // ✅ Fetch client suggestions
   const fetchClientSuggestions = async (query) => {
     try {
       setLoadingClients(true);
-      const res = await apiService.get(`/clients/search?query=${query}`, {
+      // Correct endpoint: /api/bills/search
+      const res = await apiService.get(`/bills/search?name=${query}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setClientSuggestions(res.data || []);
+      if (Array.isArray(res.data)) setClientSuggestions(res.data);
+      else setClientSuggestions([]);
     } catch (err) {
       console.error("Error fetching clients:", err);
       setClientSuggestions([]);
@@ -74,9 +73,8 @@ const Bill = () => {
     }
   };
 
-  // ✅ When client selected from dropdown
+  // ✅ When user selects a client
   const handleClientSelect = (client) => {
-    setSelectedClient(client);
     setShowSuggestions(false);
     setBillData((prev) => ({
       ...prev,
@@ -86,7 +84,7 @@ const Bill = () => {
     }));
   };
 
-  // ✅ When product selected
+  // ✅ When a product is selected
   const handleProductSelect = (e) => {
     const selectedId = e.target.value;
     const selectedProduct = products.find(
@@ -102,15 +100,15 @@ const Bill = () => {
     }
   };
 
-  // ✅ Calculate Total Amount
+  // ✅ Auto calculate total
   useEffect(() => {
     const qty = parseFloat(billData.quantity) || 0;
     const rate = parseFloat(billData.item_rate) || 0;
     const cgst = parseFloat(billData.cgst) || 0;
     const sgst = parseFloat(billData.sgst) || 0;
 
-    const baseAmount = qty * rate;
-    const total = baseAmount + (baseAmount * (cgst + sgst)) / 100;
+    const base = qty * rate;
+    const total = base + (base * (cgst + sgst)) / 100;
 
     setBillData((prev) => ({
       ...prev,
@@ -118,11 +116,11 @@ const Bill = () => {
     }));
   }, [billData.quantity, billData.item_rate, billData.cgst, billData.sgst]);
 
-  // ✅ Submit Bill
+  // ✅ Submit bill
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await apiService.post("/bill/add", billData, {
+      await apiService.post("/bills/create", billData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("✅ Bill generated successfully!");
@@ -150,7 +148,6 @@ const Bill = () => {
       total_amount: "",
       payment_method: "",
     });
-    setSelectedClient(null);
     setClientSuggestions([]);
   };
 
@@ -158,11 +155,10 @@ const Bill = () => {
     <div className="main-content">
       <div className="stock-container">
         <h1 className="stock-title">🧾 Create Bill</h1>
-
         {message && <p className="message">{message}</p>}
 
         <form className="bill-form" onSubmit={handleSubmit}>
-          {/* Client Name Field */}
+          {/* Client Name */}
           <div className="form-group">
             <label>Client Name *</label>
             <input
@@ -171,33 +167,31 @@ const Bill = () => {
               value={billData.client_name}
               onChange={handleChange}
               placeholder="Type client name..."
-              onFocus={() => setShowSuggestions(true)}
               autoComplete="off"
+              onFocus={() => setShowSuggestions(true)}
               required
             />
 
-            {/* Suggestions */}
+            {/* Suggestions Dropdown */}
             {showSuggestions && (
               <div className="suggestions-container">
                 {loadingClients && (
                   <p className="loading-text">Searching...</p>
                 )}
 
-                {!loadingClients &&
-                  clientSuggestions.length > 0 && (
-                    <ul className="suggestion-list">
-                      {clientSuggestions.map((client) => (
-                        <li
-                          key={client.id}
-                          onClick={() => handleClientSelect(client)}
-                          className="suggestion-item"
-                        >
-                          {client.name} —{" "}
-                          {client.contactNumber || "No phone"}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                {!loadingClients && clientSuggestions.length > 0 && (
+                  <ul className="suggestion-list">
+                    {clientSuggestions.map((client) => (
+                      <li
+                        key={client.id}
+                        onClick={() => handleClientSelect(client)}
+                        className="suggestion-item"
+                      >
+                        {client.name} — {client.contactNumber || "No phone"}
+                      </li>
+                    ))}
+                  </ul>
+                )}
 
                 {!loadingClients &&
                   billData.client_name &&
@@ -216,7 +210,7 @@ const Bill = () => {
               name="client_email"
               value={billData.client_email}
               onChange={handleChange}
-              placeholder="Enter or auto-filled"
+              placeholder="Auto-filled or enter manually"
             />
           </div>
 
@@ -228,7 +222,7 @@ const Bill = () => {
               name="client_phone"
               value={billData.client_phone}
               onChange={handleChange}
-              placeholder="Enter or auto-filled"
+              placeholder="Auto-filled or enter manually"
             />
           </div>
 
@@ -257,8 +251,8 @@ const Bill = () => {
               type="text"
               name="item_rate"
               value={billData.item_rate}
-              placeholder="Auto-filled"
               readOnly
+              placeholder="Auto-filled"
             />
           </div>
 
@@ -270,13 +264,13 @@ const Bill = () => {
               name="quantity"
               value={billData.quantity}
               onChange={handleChange}
-              placeholder="Enter quantity in kg"
+              placeholder="Enter quantity"
               step="0.01"
               required
             />
           </div>
 
-          {/* CGST */}
+          {/* Taxes */}
           <div className="form-group">
             <label>CGST (%)</label>
             <input
@@ -287,8 +281,6 @@ const Bill = () => {
               step="0.01"
             />
           </div>
-
-          {/* SGST */}
           <div className="form-group">
             <label>SGST (%)</label>
             <input
