@@ -1,0 +1,50 @@
+.client-dashboard {
+  padding: 30px;
+  background: #f9fafc;
+  min-height: 100vh;
+}
+
+.client-title {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #2b3a55;
+}
+
+.bill-history-container {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bill-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.bill-history-table th,
+.bill-history-table td {
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.bill-history-table th {
+  background: #1e88e5;
+  color: white;
+}
+
+.bill-history-table tr:nth-child(even) {
+  background: #f2f7ff;
+}
+
+.loading,
+.error,
+.no-bills {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  margin-top: 40px;
+}

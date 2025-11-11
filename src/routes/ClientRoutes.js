@@ -1,21 +1,23 @@
-// src/routes/ClientsRoutes.js
+// src/routes/ClientRoutes.js
 import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import ClientLayout from "../layouts/ClientLayout";
 
-const ClientsRoutes = () => {
+const ClientRoutes = () => {
   const { user } = useContext(AuthContext);
 
-  // Agar login nahi hai ya role client nahi hai → redirect to login
+  // ❌ If user not logged in or not a client → redirect
   if (!user || user.role !== "client") {
     return <Navigate to="/login" replace />;
   }
 
+  // ✅ Allow all client pages under /client/*
   return (
     <Routes>
-      <Route path="/" element={<h2>Welcome to Client Dashboard</h2>} />
+      <Route path="/*" element={<ClientLayout />} />
     </Routes>
   );
 };
 
-export default ClientsRoutes;
+export default ClientRoutes;

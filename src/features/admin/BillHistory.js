@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import apiService from "../../services/apiService";
 import { AuthContext } from "../../context/AuthContext";
-import "../../styles/stock.css"; // same clean table design reuse
-import dayjs from "dayjs"; // for clean date format
+import "../../styles/stock.css"; 
+import dayjs from "dayjs";
 
 const BillHistory = () => {
   const { token } = useContext(AuthContext);
